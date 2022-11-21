@@ -1,0 +1,8 @@
+mykey-pair
+mykey-pair.pub
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+user_data.tpl
+wordpress_tf.sh
+ignore.TXT
