@@ -1,7 +1,0 @@
-mykey-pair
-mykey-pair.pub
-.terraform
-.terraform.lock.hcl
-terraform.tfstate
-user_data.tpl
-ignore.TXT
