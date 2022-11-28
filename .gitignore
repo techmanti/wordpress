@@ -3,7 +3,5 @@ mykey-pair.pub
 .terraform
 .terraform.lock.hcl
 terraform.tfstate
-user_data.tpl
-userdata_ubuntu.tpl
-wordpress_tf.sh
 ignore.TXT
+terraform.tfstate.backup

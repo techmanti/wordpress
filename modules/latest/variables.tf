@@ -1,5 +1,8 @@
 variable "database_name" {}
-variable "database_password" {}
+variable "database_password" {
+  description = "RDS root user password"
+  sensitive   = true
+}
 variable "database_user" {}
 
 variable "region" {}

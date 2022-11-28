@@ -1,7 +1,7 @@
 provider "aws" {
 
-  region                  = var.region
-  shared_credentials_files =[var.shared_credentials_file]
+  region                   = var.region
+  shared_credentials_files = [var.shared_credentials_file]
   profile                  = "default"
 }
 
@@ -9,8 +9,8 @@ provider "aws" {
 # Cria VPC
 resource "aws_vpc" "prod-vpc" {
   cidr_block           = var.VPC_cidr
-  enable_dns_support   = "true" 
-  enable_dns_hostnames = "true" 
+  enable_dns_support   = "true"
+  enable_dns_hostnames = "true"
   instance_tenancy     = "default"
 
 
@@ -38,7 +38,7 @@ resource "aws_subnet" "prod-subnet-private-1" {
 resource "aws_subnet" "prod-subnet-private-2" {
   vpc_id                  = aws_vpc.prod-vpc.id
   cidr_block              = var.subnet3_cidr
-  map_public_ip_on_launch = "false" 
+  map_public_ip_on_launch = "false"
   availability_zone       = var.AZ3
 
 }
@@ -157,14 +157,14 @@ resource "aws_db_instance" "wordpressdb" {
   instance_class         = var.instance_class
   db_subnet_group_name   = aws_db_subnet_group.RDS_subnet_grp.id
   vpc_security_group_ids = ["${aws_security_group.RDS_allow_rule.id}"]
-  db_name                   = var.database_name
+  db_name                = var.database_name
   username               = var.database_user
   password               = var.database_password
   skip_final_snapshot    = true
 
   lifecycle {
-     ignore_changes = [password]
-   }
+    ignore_changes = [password]
+  }
 }
 
 data "template_file" "user_data" {
@@ -191,7 +191,7 @@ resource "aws_instance" "wordpressec2" {
   }
 
   root_block_device {
-    volume_size = var.root_volume_size 
+    volume_size = var.root_volume_size
 
   }
 
@@ -212,9 +212,9 @@ resource "aws_eip" "eip" {
 }
 
 resource "null_resource" "Wordpress_Installation_Waiting" {
-   triggers={
-    ec2_id=aws_instance.wordpressec2.id,
-    rds_endpoint=aws_db_instance.wordpressdb.endpoint
+  triggers = {
+    ec2_id       = aws_instance.wordpressec2.id,
+    rds_endpoint = aws_db_instance.wordpressdb.endpoint
 
   }
   connection {
@@ -230,8 +230,3 @@ resource "null_resource" "Wordpress_Installation_Waiting" {
 
   }
 }
-
-
-
-
-
