@@ -4,7 +4,7 @@ module "aws_wordpress" {
   source                  = "./modules/latest"
   database_name           = "wordpresstechman_db" // database name
   database_user           = "tmroot"              //database username
-  database_password       = "wPT3chM4n!Db"        //password for user database
+  database_password       = var.database_password        //password for user database
   shared_credentials_file = "~/.aws/credentials"  //access key and Secret key file location
   region                  = "us-east-2"           //ohio lest eua
   IsUbuntu                = true                  // true for ubuntu -false for linux 2  //boolean type
