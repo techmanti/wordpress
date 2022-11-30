@@ -205,12 +205,6 @@ resource "aws_key_pair" "mykey-pair" {
   public_key = file(var.PUBLIC_KEY_PATH)
 }
 
-# creating Elastic IP for EC2
-resource "aws_eip" "eip" {
-  instance = aws_instance.wordpressec2.id
-
-}
-
 resource "null_resource" "Wordpress_Installation_Waiting" {
   triggers = {
     ec2_id       = aws_instance.wordpressec2.id,
@@ -221,7 +215,7 @@ resource "null_resource" "Wordpress_Installation_Waiting" {
     type        = "ssh"
     user        = var.IsUbuntu ? "ubuntu" : "ec2-user"
     private_key = file(var.PRIV_KEY_PATH)
-    host        = aws_eip.eip.public_ip
+    host        = aws_instance.wordpressec2.public_ip
   }
 
 
