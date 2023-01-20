@@ -5,3 +5,4 @@ mykey-pair.pub
 terraform.tfstate
 ignore.TXT
 terraform.tfstate.backup
+aws_ami.txt
