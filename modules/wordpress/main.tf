@@ -64,7 +64,7 @@ resource "aws_route_table" "prod-public-crt" {
 }
 
 
-# Associa a route tabe para public subnet
+# Associa a route table para public subnet
 resource "aws_route_table_association" "prod-crta-public-subnet-1" {
   subnet_id      = aws_subnet.prod-subnet-public-1.id
   route_table_id = aws_route_table.prod-public-crt.id
@@ -180,7 +180,7 @@ data "template_file" "user_data" {
 
 # Create EC2 ( dps de criar rds)
 resource "aws_instance" "wordpressec2" {
-  ami                    = var.IsUbuntu ? data.aws_ami.ubuntu.id : data.aws_ami.linux2.id
+  ami                    = var.aws_ami
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.prod-subnet-public-1.id
   vpc_security_group_ids = ["${aws_security_group.ec2_allow_rule.id}"]
@@ -188,6 +188,9 @@ resource "aws_instance" "wordpressec2" {
   key_name               = aws_key_pair.mykey-pair.id
   tags = {
     Name = "Wordpress.web"
+  }
+  volume_tags = {
+    "backup" = "True"
   }
 
   root_block_device {
@@ -205,6 +208,12 @@ resource "aws_key_pair" "mykey-pair" {
   public_key = file(var.PUBLIC_KEY_PATH)
 }
 
+# creating Elastic IP for EC2
+resource "aws_eip" "eip" {
+  instance = aws_instance.wordpressec2.id
+
+}
+
 resource "null_resource" "Wordpress_Installation_Waiting" {
   triggers = {
     ec2_id       = aws_instance.wordpressec2.id,
@@ -215,7 +224,7 @@ resource "null_resource" "Wordpress_Installation_Waiting" {
     type        = "ssh"
     user        = var.IsUbuntu ? "ubuntu" : "ec2-user"
     private_key = file(var.PRIV_KEY_PATH)
-    host        = aws_instance.wordpressec2.public_ip
+    host        = aws_eip.eip.public_ip
   }
 
 

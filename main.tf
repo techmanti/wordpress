@@ -1,7 +1,7 @@
 
 
 module "aws_wordpress" {
-  source                  = "./modules/latest"
+  source                  = "./modules/wordpress"
   database_name           = "wordpresstechman_db" // database name
   database_user           = "tmroot"              //database username
   database_password       = var.database_password        //password for user database

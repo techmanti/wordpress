@@ -24,4 +24,21 @@ variable "instance_class" {}
 variable "PUBLIC_KEY_PATH" {}
 variable "PRIV_KEY_PATH" {}
 variable "root_volume_size" {}
+variable "aws_ami" {
+  type = string
+  description = "name ami" 
+  default = "ami-0cb81cb394fc2e305"
+}
 
+#router 53
+variable "domain_name" {
+  type = string
+  description = "domain name" 
+  default = "techman.sh"
+}
+
+variable "record_name" {
+  type = string
+  description = "sub domain name" 
+  default = "www.techman.sh"
+}
