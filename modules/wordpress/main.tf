@@ -190,7 +190,7 @@ resource "aws_instance" "wordpressec2" {
     Name = "Wordpress.web"
   }
   volume_tags = {
-    "backup" = "true"
+    "backup" = "True"
   }
 
   root_block_device {
