@@ -6,7 +6,7 @@ provider "aws" {
 }
 
 
-# Cria VPC
+# create vpc
 resource "aws_vpc" "prod-vpc" {
   cidr_block           = var.VPC_cidr
   enable_dns_support   = "true"
@@ -16,25 +16,34 @@ resource "aws_vpc" "prod-vpc" {
 
 }
 
-# Cria Public Subnet para EC2
+# first public subnet EC2
 resource "aws_subnet" "prod-subnet-public-1" {
   vpc_id                  = aws_vpc.prod-vpc.id
   cidr_block              = var.subnet1_cidr
-  map_public_ip_on_launch = "true" //deixa subnet publica
+  map_public_ip_on_launch = "true" //public subnet 
   availability_zone       = var.AZ1
 
 }
 
-# Cria private subnet para RDS
-resource "aws_subnet" "prod-subnet-private-1" {
+# second public subnet EC2
+resource "aws_subnet" "prod-subnet-public-2" {
   vpc_id                  = aws_vpc.prod-vpc.id
-  cidr_block              = var.subnet2_cidr
-  map_public_ip_on_launch = "false" //deixa subnet privada
+  cidr_block              = var.subnet4_cidr
+  map_public_ip_on_launch = "true" 
   availability_zone       = var.AZ2
 
 }
 
-# Cria second private subnet para RDS
+# first private subnet RDS
+resource "aws_subnet" "prod-subnet-private-1" {
+  vpc_id                  = aws_vpc.prod-vpc.id
+  cidr_block              = var.subnet2_cidr
+  map_public_ip_on_launch = "false" //private subnet
+  availability_zone       = var.AZ2
+
+}
+
+# second private subnet RDS
 resource "aws_subnet" "prod-subnet-private-2" {
   vpc_id                  = aws_vpc.prod-vpc.id
   cidr_block              = var.subnet3_cidr
@@ -44,14 +53,13 @@ resource "aws_subnet" "prod-subnet-private-2" {
 }
 
 
-
-# Cria IGW( Internet Gateway) 
+# create IGW( Internet Gateway) 
 resource "aws_internet_gateway" "prod-igw" {
   vpc_id = aws_vpc.prod-vpc.id
 
 }
 
-# Cria route table
+# route table
 resource "aws_route_table" "prod-public-crt" {
   vpc_id = aws_vpc.prod-vpc.id
 
@@ -64,7 +72,7 @@ resource "aws_route_table" "prod-public-crt" {
 }
 
 
-# Associa a route table para public subnet
+# associeation route table to public subnet
 resource "aws_route_table_association" "prod-crta-public-subnet-1" {
   subnet_id      = aws_subnet.prod-subnet-public-1.id
   route_table_id = aws_route_table.prod-public-crt.id
@@ -73,9 +81,7 @@ resource "aws_route_table_association" "prod-crta-public-subnet-1" {
 
 
 //security group for EC2
-
 resource "aws_security_group" "ec2_allow_rule" {
-
 
   ingress {
     description = "HTTPS"
@@ -144,12 +150,12 @@ resource "aws_security_group" "RDS_allow_rule" {
 
 }
 
-# Create RDS Subnet group
+# create RDS Subnet group
 resource "aws_db_subnet_group" "RDS_subnet_grp" {
   subnet_ids = ["${aws_subnet.prod-subnet-private-1.id}", "${aws_subnet.prod-subnet-private-2.id}"]
 }
 
-# Create RDS instance
+# create RDS instance
 resource "aws_db_instance" "wordpressdb" {
   allocated_storage      = 10
   engine                 = "mysql"
@@ -178,7 +184,7 @@ data "template_file" "user_data" {
 }
 
 
-# Create EC2 ( dps de criar rds)
+# create EC2
 resource "aws_instance" "wordpressec2" {
   ami                    = var.aws_ami
   instance_type          = var.instance_type
@@ -198,17 +204,17 @@ resource "aws_instance" "wordpressec2" {
 
   }
 
-  # RDS > EC2 ordem de criacao
+  # RDS > EC2 
   depends_on = [aws_db_instance.wordpressdb]
 }
 
-// Sends your public key to the instance
+// sends your public key to the instance
 resource "aws_key_pair" "mykey-pair" {
   key_name   = "mykey-pair"
   public_key = file(var.PUBLIC_KEY_PATH)
 }
 
-# creating Elastic IP for EC2
+# create Elastic IP for EC2
 resource "aws_eip" "eip" {
   instance = aws_instance.wordpressec2.id
 

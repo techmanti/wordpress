@@ -21,4 +21,3 @@ variable "aws_ami" {}
 variable "domain_name" {}
 variable "record_name" {}
 variable "alternative_name" {}
-variable "certificate_arn" {}
